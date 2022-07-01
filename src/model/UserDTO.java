@@ -4,7 +4,7 @@ public class UserDTO {
     private int id;
     private String userName;
     private String passWord;
-    private int userClass;
+    private String userClass;
     
     
     public int getId() {
@@ -26,10 +26,10 @@ public class UserDTO {
         this.passWord = passWord;
     }
     
-    public int getUserClass() {
+    public String getUserClass() {
         return userClass;
     }
-    public void setUserClass(int userClass) {
+    public void setUserClass(String userClass) {
         this.userClass = userClass;
     }
     

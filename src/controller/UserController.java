@@ -17,41 +17,43 @@ public class UserController {
     public UserController(DBConnector connector) {
         conn = connector.makeConnection();
     }
-    
+
     // 1. 로그인
-    
+
     public UserDTO logIn(String userName, String passWord) {
-       String query = "SELECT *FROM `user` WHERE `username` = ? AND `password` = ? AND `class` = ?";
-       
-       try {
-        PreparedStatement pstmt = conn.prepareStatement(query);
-        pstmt.setString(1, userName);
-        pstmt.setString(2, passWord);
-        
-        ResultSet rs = pstmt.executeQuery();
-        if(rs.next()) {
-            UserDTO u = new UserDTO();
-            u.setId(rs.getInt("id"));
-            u.setUserName(rs.getString("userName"));
-            u.setPassWord(rs.getString("passWord"));
-            
-            return u;
+        String query = "SELECT *FROM `user` WHERE `userName` = ? AND `passWord` = ?";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, userName);
+            pstmt.setString(2, passWord);
+           
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                UserDTO u = new UserDTO();
+                u.setId(rs.getInt("id"));
+                u.setUserName(rs.getString("userName"));
+                u.setPassWord(rs.getString("passWord"));
+                u.setUserClass(rs.getString("userClass"));
+
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return null;
     }
-       return null;
-    }
-    
-    //2. 회원가입
+
+    // 2. 회원가입
     public boolean register(UserDTO u) {
         String query = "INSERT INTO `user` (`userName`, `passWord`, `userclass`) VALUES (?,?,?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, u.getUserName());
             pstmt.setString(2, u.getPassWord());
-            pstmt.setInt(3, u.getUserClass());
-            
+            pstmt.setString(3, u.getUserClass());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,8 +61,8 @@ public class UserController {
         }
         return true;
     }
-    
-    //3.회원 정보 수정
+
+    // 3.회원 정보 수정
     public void update(UserDTO u) {
         String query = "UPDATE `user` SET `passWord` =? WHERE `id` = ?";
         try {
@@ -68,13 +70,24 @@ public class UserController {
             pstmt = conn.prepareStatement(query);
             pstmt.setString(1, u.getPassWord());
             pstmt.setInt(2, u.getId());
-            
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
-    
-    
+
+    // 4.회원정보 삭제
+    public void delete(int id) {
+        String query = "DELETE FROM `user` WHERE `id` = ?";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
